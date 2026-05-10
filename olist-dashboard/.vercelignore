@@ -1,0 +1,10 @@
+*.py
+*.ipynb
+*.csv
+*.xlsx
+data/
+scripts/
+__pycache__/
+*.pyc
+.env
+.env.*

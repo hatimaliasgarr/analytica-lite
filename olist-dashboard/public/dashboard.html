@@ -1,0 +1,206 @@
+<template id="dashboard-template">
+  <section class="dashboard-grid" aria-label="Analytics dashboard">
+    <div class="dashboard-left">
+      <article class="dashboard-card analytics-card" data-card="revenue">
+        <header class="card-header">
+          <h2 class="section-title">Revenue Overview</h2>
+          <button class="filter-pill mini-date-filter" type="button" data-open-date-filter>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="5" width="16" height="15" rx="3"></rect>
+              <path d="M8 3v4M16 3v4M4 10h16"></path>
+            </svg>
+            <span data-current-filter>All time</span>
+          </button>
+        </header>
+        <div class="chart-area chart-h-200">
+          <canvas id="revenue-overview-chart" aria-label="Grouped bar chart showing revenue over time"></canvas>
+        </div>
+      </article>
+
+      <article class="dashboard-card metrics-card" data-card="metrics">
+        <header class="card-header">
+          <h2 class="section-title">Key Metrics</h2>
+        </header>
+        <div class="metric-grid">
+          <div class="metric-cell">
+            <div>
+              <p class="kpi-value" id="kpi-total-revenue">—</p>
+              <p class="kpi-label">Total Revenue</p>
+            </div>
+            <svg class="sparkline" id="spark-total-revenue" viewBox="0 0 60 32" aria-hidden="true"></svg>
+            <button class="toggle is-on" type="button" aria-label="Growth toggle"><span></span></button>
+          </div>
+          <div class="metric-cell">
+            <div>
+              <p class="kpi-value" id="kpi-total-orders">—</p>
+              <p class="kpi-label">Total Orders</p>
+            </div>
+            <svg class="sparkline" id="spark-total-orders" viewBox="0 0 60 32" aria-hidden="true"></svg>
+            <button class="toggle is-on" type="button" aria-label="Trend toggle"><span></span></button>
+          </div>
+          <div class="metric-cell">
+            <div>
+              <p class="kpi-value" id="kpi-aov">—</p>
+              <p class="kpi-label">Avg Order Value</p>
+            </div>
+            <svg class="sparkline" id="spark-aov" viewBox="0 0 60 32" aria-hidden="true"></svg>
+            <button class="toggle" type="button" aria-label="Average order value toggle"><span></span></button>
+          </div>
+          <div class="metric-cell" id="rating-metric-cell">
+            <div>
+              <p class="kpi-value" id="kpi-avg-rating">—</p>
+              <p class="kpi-label">Avg Rating</p>
+            </div>
+            <svg class="sparkline" id="spark-rating" viewBox="0 0 60 32" aria-hidden="true"></svg>
+            <button class="toggle" type="button" aria-label="Rating toggle"><span></span></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="dashboard-card custom-kpi-builder" data-card="custom-kpis">
+        <header class="card-header">
+          <h2 class="section-title">Custom KPIs</h2>
+        </header>
+        <div class="custom-kpi-form">
+          <label>
+            <span>Field</span>
+            <select id="custom-kpi-field"></select>
+          </label>
+          <label>
+            <span>Calculation</span>
+            <select id="custom-kpi-aggregation">
+              <option value="sum">Sum</option>
+              <option value="avg">Average</option>
+              <option value="count">Count</option>
+              <option value="min">Minimum</option>
+              <option value="max">Maximum</option>
+            </select>
+          </label>
+          <label>
+            <span>Label</span>
+            <input id="custom-kpi-label" type="text" placeholder="Custom KPI name">
+          </label>
+          <label class="color-inline-field">
+            <span>Color code</span>
+            <input id="custom-kpi-color" type="color" value="#3DAA7A">
+          </label>
+          <button class="primary-btn" id="add-custom-kpi" type="button">Add KPI</button>
+        </div>
+        <p class="list-placeholder" id="custom-kpi-empty">Add a numeric field as a KPI card.</p>
+        <div class="custom-kpi-grid" id="custom-kpi-grid" hidden></div>
+      </article>
+
+      <article class="dashboard-card donut-card" data-card="category">
+        <header class="card-header">
+          <h2 class="section-title">Category Breakdown</h2>
+        </header>
+        <div class="donut-row" id="category-donuts">
+          <div class="donut-slot"><canvas id="category-donut-1" aria-label="Top category share"></canvas></div>
+          <div class="donut-slot"><canvas id="category-donut-2" aria-label="Second category share"></canvas></div>
+          <div class="donut-slot"><canvas id="category-donut-3" aria-label="Third category share"></canvas></div>
+        </div>
+        <div class="empty-state" id="category-empty" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+            <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+          </svg>
+          <p>Map a Category column to unlock this chart</p>
+          <button class="link-btn go-mapper" type="button">Go to column mapper</button>
+        </div>
+      </article>
+    </div>
+
+    <aside class="dashboard-right">
+      <article class="dashboard-card detail-card" data-card="details">
+        <div class="tab-row" role="tablist" aria-label="Stats detail">
+          <button class="tab-btn is-active" type="button" data-tab="overview">Overview</button>
+          <button class="tab-btn" type="button" data-tab="trends">Trends</button>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="overview">
+          <div class="detail-stats">
+            <div>
+              <strong id="detail-orders">—</strong>
+              <span>Orders</span>
+            </div>
+            <div>
+              <strong id="detail-rating">—</strong>
+              <span>Avg Score</span>
+            </div>
+            <div>
+              <strong id="detail-region">—</strong>
+              <span>Top Region</span>
+            </div>
+          </div>
+          <div class="chart-area chart-h-90">
+            <canvas id="overview-line-chart" aria-label="Small line chart showing revenue over time"></canvas>
+          </div>
+          <div class="period-buttons">
+            <button class="pill-btn" type="button" data-period="year">Yearly</button>
+            <button class="pill-btn is-active" type="button" data-period="month">Monthly</button>
+            <button class="pill-btn" type="button" data-period="day">Daily</button>
+          </div>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="trends" hidden>
+          <div class="chart-area chart-h-160">
+            <canvas id="trends-line-chart" aria-label="Line chart showing revenue and orders trend"></canvas>
+          </div>
+          <div class="period-buttons">
+            <button class="pill-btn is-active" type="button" data-filter-short="3m">3M</button>
+            <button class="pill-btn" type="button" data-filter-short="6m">6M</button>
+            <button class="pill-btn" type="button" data-filter-short="1y">1Y</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="dashboard-card color-code-panel" data-card="colors">
+        <header class="card-header">
+          <h2 class="section-title">Color Codes</h2>
+          <div class="palette-row">
+            <button class="palette-swatch" type="button" data-palette="green" style="--swatch:#3DAA7A" aria-label="Green palette"></button>
+            <button class="palette-swatch" type="button" data-palette="blue" style="--swatch:#2F80ED" aria-label="Blue palette"></button>
+            <button class="palette-swatch" type="button" data-palette="rose" style="--swatch:#D9467A" aria-label="Rose palette"></button>
+          </div>
+        </header>
+        <div class="color-code-grid compact">
+          <label class="color-code-field">
+            <span>Accent</span>
+            <input type="color" value="#3DAA7A" data-theme-color="accent">
+            <code>#3DAA7A</code>
+          </label>
+          <label class="color-code-field">
+            <span>Bar</span>
+            <input type="color" value="#74C69D" data-theme-color="barPrimary">
+            <code>#74C69D</code>
+          </label>
+          <label class="color-code-field">
+            <span>Base</span>
+            <input type="color" value="#B7E4C7" data-theme-color="barSecondary">
+            <code>#B7E4C7</code>
+          </label>
+          <label class="color-code-field">
+            <span>Trend</span>
+            <input type="color" value="#F4A261" data-theme-color="trend">
+            <code>#F4A261</code>
+          </label>
+        </div>
+      </article>
+
+      <article class="dashboard-card top-list-card" data-card="lists">
+        <div class="top-list-cols">
+          <section>
+            <h3>Top Categories</h3>
+            <ol class="rank-list" id="top-category-list"></ol>
+            <p class="list-placeholder" id="top-category-placeholder" hidden>Map a Category column to unlock this list</p>
+          </section>
+          <section>
+            <h3>Top Regions</h3>
+            <ol class="rank-list" id="top-region-list"></ol>
+            <p class="list-placeholder" id="top-region-placeholder" hidden>Map a Region column to unlock this list</p>
+          </section>
+        </div>
+      </article>
+    </aside>
+  </section>
+</template>
