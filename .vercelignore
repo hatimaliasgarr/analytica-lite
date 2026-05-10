@@ -1,0 +1,12 @@
+*.py
+*.ipynb
+*.csv
+*.xlsx
+data/
+scripts/
+olist-dashboard/
+sample-data/
+__pycache__/
+*.pyc
+.env
+.env.*

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="DataLens Analytics is a universal upload-first analytics dashboard that processes data locally in your browser."
+    >
+    <title>DataLens Analytics</title>
+    <link rel="stylesheet" href="./css/design-system.css">
+    <link rel="stylesheet" href="./css/layout.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/upload.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <button class="logo-area" id="sidebar-toggle" type="button" aria-label="Toggle sidebar">
+          <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="21" cy="21" r="13" fill="none" stroke="currentColor" stroke-width="4"></circle>
+            <line x1="31" y1="31" x2="42" y2="42" stroke="currentColor" stroke-width="4" stroke-linecap="round"></line>
+            <line x1="15" y1="27" x2="15" y2="21" stroke="currentColor" stroke-width="3" stroke-linecap="round"></line>
+            <line x1="21" y1="27" x2="21" y2="15" stroke="currentColor" stroke-width="3" stroke-linecap="round"></line>
+            <line x1="27" y1="27" x2="27" y2="19" stroke="currentColor" stroke-width="3" stroke-linecap="round"></line>
+          </svg>
+          <span class="logo-text">DataLens</span>
+        </button>
+
+        <nav class="sidebar-nav" aria-label="Primary navigation">
+          <button class="nav-item" type="button" data-nav="Dashboard" data-route="dashboard" data-target-step="dashboard">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="4" width="7" height="7" rx="2"></rect>
+              <rect x="13" y="4" width="7" height="7" rx="2"></rect>
+              <rect x="4" y="13" width="7" height="7" rx="2"></rect>
+              <rect x="13" y="13" width="7" height="7" rx="2"></rect>
+            </svg>
+            <span>Dashboard</span>
+          </button>
+          <button class="nav-item is-active" type="button" data-nav="Upload" data-route="upload" data-target-step="source">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V5"></path>
+              <path d="m7 10 5-5 5 5"></path>
+              <path d="M5 19h14"></path>
+            </svg>
+            <span>Upload</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="Reports" data-route="reports">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 19V9"></path>
+              <path d="M12 19V5"></path>
+              <path d="M19 19v-7"></path>
+              <path d="M4 19h16"></path>
+            </svg>
+            <span>Reports</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="Settings" data-route="settings">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19 12a7 7 0 0 0-.1-1.1l2-1.5-2-3.4-2.4 1a7.3 7.3 0 0 0-1.9-1.1L14.3 3h-4.6l-.4 2.9A7.3 7.3 0 0 0 7.4 7l-2.4-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.1l-2 1.5 2 3.4 2.4-1a7.3 7.3 0 0 0 1.9 1.1l.4 2.9h4.6l.4-2.9a7.3 7.3 0 0 0 1.9-1.1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1.1Z"></path>
+            </svg>
+            <span>Settings</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="Help" data-route="help">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="8"></circle>
+              <path d="M9.8 9a2.4 2.4 0 0 1 4.5 1.2c0 1.8-2.3 2-2.3 3.8"></path>
+              <path d="M12 17h.01"></path>
+            </svg>
+            <span>Help</span>
+          </button>
+        </nav>
+
+        <button class="logout-btn" id="logout-btn" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"></path>
+            <path d="M14 16l4-4-4-4"></path>
+            <path d="M18 12H9"></path>
+          </svg>
+          <span>Logout</span>
+        </button>
+      </aside>
+
+      <header class="topbar">
+        <button class="mobile-menu" id="mobile-menu" type="button" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <h1 class="page-title" id="page-title">Upload</h1>
+        <label class="search-box" aria-label="Search">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m16.5 16.5 3.5 3.5"></path>
+          </svg>
+          <input id="global-search" type="search" placeholder="Search...">
+        </label>
+        <div class="topbar-actions">
+          <button class="text-btn" id="change-data-btn" type="button">Change Data</button>
+          <div class="dropdown-wrap">
+            <button class="filter-pill" id="date-filter-btn" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="5" width="16" height="15" rx="3"></rect>
+                <path d="M8 3v4M16 3v4M4 10h16"></path>
+              </svg>
+              <span id="date-filter-label">All time</span>
+            </button>
+            <div class="dropdown-menu" id="date-filter-menu" hidden>
+              <button type="button" data-filter="7d">Last 7 days</button>
+              <button type="button" data-filter="30d">Last 30 days</button>
+              <button type="button" data-filter="3m">Last 3 Months</button>
+              <button type="button" data-filter="6m">Last 6 Months</button>
+              <button type="button" data-filter="1y">Last Year</button>
+              <button type="button" data-filter="all">All time</button>
+            </div>
+          </div>
+          <div class="dropdown-wrap">
+            <button class="export-btn" id="export-btn" type="button">Export</button>
+            <div class="dropdown-menu export-menu" id="export-menu" hidden>
+              <button type="button" data-export="png">Export as PNG</button>
+              <button type="button" data-export="kpis">Export KPIs as CSV</button>
+              <button type="button" data-export="data">Export full data as CSV</button>
+            </div>
+          </div>
+          <div class="dropdown-wrap">
+            <button class="icon-btn" id="notifications-btn" type="button" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 16v-5a6 6 0 0 0-12 0v5l-2 2h16Z"></path>
+                <path d="M10 20a2 2 0 0 0 4 0"></path>
+              </svg>
+              <span class="badge">3</span>
+            </button>
+            <div class="dropdown-menu notifications-menu" id="notifications-menu" data-utility-menu hidden>
+              <button type="button" data-profile-route="upload">Upload source ready</button>
+              <button type="button" data-profile-route="settings">Color controls ready</button>
+              <button type="button" data-profile-route="reports">Reports interface ready</button>
+            </div>
+          </div>
+          <div class="dropdown-wrap">
+            <button class="avatar" id="profile-btn" type="button" aria-label="User menu">YN</button>
+            <div class="dropdown-menu profile-menu" id="profile-menu" data-utility-menu hidden>
+              <button type="button" data-profile-route="settings">Settings</button>
+              <button type="button" data-profile-route="help">Help</button>
+              <button type="button" data-profile-route="upload">Change data</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content" id="app-main">
+        <div id="content-root">
+          <section class="wizard" data-step-panel="source">
+            <div class="stepper" aria-label="Setup progress">
+              <div class="step is-active" data-step-indicator="source">
+                <span>1</span>
+                <strong>Choose Source</strong>
+              </div>
+              <div class="step-line"></div>
+              <div class="step" data-step-indicator="mapper">
+                <span>2</span>
+                <strong>Map Columns</strong>
+              </div>
+              <div class="step-line"></div>
+              <div class="step" data-step-indicator="dashboard">
+                <span>3</span>
+                <strong>View Dashboard</strong>
+              </div>
+            </div>
+
+            <article class="upload-panel">
+              <header class="upload-header">
+                <h2>Connect Your Data</h2>
+                <p>Your data is processed locally in your browser and never sent to any server.</p>
+              </header>
+
+              <div class="source-grid" id="source-grid">
+                <button class="source-card is-selected" type="button" data-source="file">
+                  <span class="source-icon">File</span>
+                  <strong>Upload File</strong>
+                  <small>CSV · Excel · JSON</small>
+                  <em>TSV · any tabular</em>
+                </button>
+                <button class="source-card" type="button" data-source="supabase">
+                  <span class="source-icon">SQL</span>
+                  <strong>Supabase</strong>
+                  <small>Connect with URL</small>
+                  <em>+ anon key</em>
+                </button>
+                <button class="source-card" type="button" data-source="firebase">
+                  <span class="source-icon">Fire</span>
+                  <strong>Firebase</strong>
+                  <small>Firestore docs</small>
+                  <em>via your config</em>
+                </button>
+                <button class="source-card" type="button" data-source="url">
+                  <span class="source-icon">URL</span>
+                  <strong>Public URL</strong>
+                  <small>Paste a CSV/JSON</small>
+                  <em>link fetched live</em>
+                </button>
+              </div>
+
+              <div class="source-panel" data-source-panel="file">
+                <div class="dropzone" id="dropzone">
+                  <input
+                    id="file-input"
+                    type="file"
+                    accept=".csv,.tsv,.xlsx,.xls,.json,application/json,text/csv"
+                    hidden
+                  >
+                  <svg class="drop-icon" viewBox="0 0 48 48" aria-hidden="true">
+                    <path d="M24 31V12"></path>
+                    <path d="m15 21 9-9 9 9"></path>
+                    <path d="M10 36h28"></path>
+                  </svg>
+                  <h3>Drag & drop your file here</h3>
+                  <p>Supports .csv .xlsx .xls .json .tsv — max 50MB</p>
+                  <button class="link-btn" id="browse-btn" type="button">Or browse files</button>
+                  <div class="file-badges" aria-label="Supported formats">
+                    <span>.csv</span>
+                    <span>.xlsx</span>
+                    <span>.xls</span>
+                    <span>.json</span>
+                    <span>.tsv</span>
+                  </div>
+                  <div class="progress-bar" id="upload-progress" hidden>
+                    <span></span>
+                  </div>
+                  <div class="file-result" id="file-result" hidden></div>
+                </div>
+              </div>
+
+              <form class="source-panel connector-form" data-source-panel="supabase" hidden>
+                <label>
+                  <span>Project URL</span>
+                  <input name="url" type="url" placeholder="https://xxxxx.supabase.co">
+                </label>
+                <label>
+                  <span>Anon / Public Key</span>
+                  <input name="anonKey" type="password" placeholder="eyJhbGciOi...">
+                </label>
+                <label>
+                  <span>Table or View Name</span>
+                  <input name="table" type="text" placeholder="orders">
+                </label>
+                <label>
+                  <span>Row limit (optional)</span>
+                  <input name="limit" type="number" min="1" placeholder="10000" value="10000">
+                </label>
+                <button class="primary-btn" type="submit">Test Connection & Fetch</button>
+                <p class="form-message" data-form-message></p>
+              </form>
+
+              <form class="source-panel connector-form" data-source-panel="firebase" hidden>
+                <label class="span-2">
+                  <span>Firebase Config JSON</span>
+                  <textarea name="config" rows="5" placeholder='{"apiKey":"...","projectId":"..."}'></textarea>
+                </label>
+                <label>
+                  <span>Collection name</span>
+                  <input name="collection" type="text" placeholder="orders">
+                </label>
+                <label>
+                  <span>Where clause (optional)</span>
+                  <input name="whereClause" type="text" placeholder="status == 'delivered'">
+                </label>
+                <button class="primary-btn" type="submit">Connect & Fetch</button>
+                <p class="form-message" data-form-message></p>
+              </form>
+
+              <form class="source-panel connector-form" data-source-panel="url" hidden>
+                <label class="span-2">
+                  <span>URL</span>
+                  <input name="url" type="url" placeholder="https://example.com/data.csv">
+                </label>
+                <fieldset class="radio-row">
+                  <legend>Format</legend>
+                  <label><input type="radio" name="format" value="auto" checked> Auto</label>
+                  <label><input type="radio" name="format" value="csv"> CSV</label>
+                  <label><input type="radio" name="format" value="json"> JSON</label>
+                </fieldset>
+                <button class="primary-btn" type="submit">Fetch Data</button>
+                <p class="form-message" data-form-message></p>
+              </form>
+            </article>
+          </section>
+
+          <section class="wizard" data-step-panel="mapper" hidden>
+            <div class="stepper" aria-label="Setup progress">
+              <div class="step is-complete" data-step-indicator="source">
+                <span>✓</span>
+                <strong>Choose Source</strong>
+              </div>
+              <div class="step-line"></div>
+              <div class="step is-active" data-step-indicator="mapper">
+                <span>2</span>
+                <strong>Map Columns</strong>
+              </div>
+              <div class="step-line"></div>
+              <div class="step" data-step-indicator="dashboard">
+                <span>3</span>
+                <strong>View Dashboard</strong>
+              </div>
+            </div>
+
+            <article class="mapper-panel">
+              <header class="mapper-header">
+                <div>
+                  <h2>Map Columns</h2>
+                  <p class="muted" id="dataset-summary">Review detected fields and adjust anything that looks off.</p>
+                </div>
+                <div class="mapper-actions">
+                  <button class="secondary-btn" id="auto-map-btn" type="button">Auto map</button>
+                  <button class="secondary-btn" id="clear-map-btn" type="button">Clear</button>
+                  <button class="secondary-btn" id="back-to-source" type="button">Back</button>
+                </div>
+              </header>
+              <div class="mapper-warning" id="mapper-warning">
+                Please map at least one Date column and one Revenue column to continue.
+              </div>
+              <div class="mapper-table-wrap">
+                <table class="mapper-table">
+                  <thead>
+                    <tr>
+                      <th>Your Column Name</th>
+                      <th>Sample Values</th>
+                      <th>Detected As</th>
+                      <th>Map To</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="mapper-body"></tbody>
+                </table>
+              </div>
+              <button class="primary-btn full-width" id="generate-dashboard" type="button" disabled>
+                Generate Dashboard
+              </button>
+            </article>
+          </section>
+
+          <section class="building-screen" data-step-panel="building" hidden>
+            <svg class="build-logo" viewBox="0 0 48 48" aria-hidden="true">
+              <circle cx="21" cy="21" r="13" fill="none" stroke="currentColor" stroke-width="4"></circle>
+              <line x1="31" y1="31" x2="42" y2="42" stroke="currentColor" stroke-width="4" stroke-linecap="round"></line>
+              <line x1="15" y1="27" x2="15" y2="21" stroke="currentColor" stroke-width="3" stroke-linecap="round"></line>
+              <line x1="21" y1="27" x2="21" y2="15" stroke="currentColor" stroke-width="3" stroke-linecap="round"></line>
+              <line x1="27" y1="27" x2="27" y2="19" stroke="currentColor" stroke-width="3" stroke-linecap="round"></line>
+            </svg>
+            <h2>Building your dashboard...</h2>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="confirm-modal" hidden>
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <h2 id="confirm-title">Clear current data?</h2>
+        <p>This will clear your current data. Continue?</p>
+        <div class="modal-actions">
+          <button class="secondary-btn" id="cancel-reset" type="button">Cancel</button>
+          <button class="danger-btn" id="confirm-reset" type="button">Continue</button>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="./js/upload-flow.js"></script>
+  </body>
+</html>

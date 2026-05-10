@@ -1,0 +1,8 @@
+{
+  "name": "datalens-analytics",
+  "version": "1.0.0",
+  "description": "Universal upload-first analytics dashboard",
+  "scripts": {
+    "start": "echo Open public/index.html to run locally"
+  }
+}
